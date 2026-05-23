@@ -87,12 +87,22 @@
             overflow: hidden;
             transition: box-shadow 0.25s;
         }
-        .card:hover {
-            box-shadow: 0 6px 28px rgba(204, 34, 0, 0.18);
-        }
+        .card.girl:hover { box-shadow: 0 6px 28px rgba(204, 34, 0, 0.25); }
+        .card.boy:hover  { box-shadow: 0 6px 28px rgba(30, 100, 220, 0.28); }
+
         .card-head {
-            background: linear-gradient(135deg, #aa1800 0%, #770f00 100%);
             padding: 14px 18px;
+        }
+        .card.girl .card-head { background: linear-gradient(135deg, #aa1800 0%, #770f00 100%); }
+        .card.boy  .card-head { background: linear-gradient(135deg, #1052b8 0%, #083580 100%); }
+
+        .athlete-name {
+            font-size: 1.45rem;
+            font-weight: 800;
+            color: #fff;
+            letter-spacing: 0.5px;
+            margin-bottom: 6px;
+            line-height: 1.1;
         }
         .card-head-meta {
             display: flex;
@@ -130,7 +140,6 @@
 
         .time-pill {
             flex-shrink: 0;
-            background: #cc2200;
             color: #fff;
             padding: 5px 13px;
             border-radius: 20px;
@@ -139,6 +148,8 @@
             min-width: 88px;
             text-align: center;
         }
+        .card.girl .time-pill { background: #cc2200; }
+        .card.boy  .time-pill { background: #1052b8; }
         .match-info {
             flex: 1;
             font-size: 0.83rem;
@@ -253,10 +264,10 @@
 
 <script>
 const CATEGORIES = [
-    { id: '1977986', name: 'KUMITE-U14 Advanced: 12 &amp; 13 Years / Boys / -50 KG' },
-    { id: '1981250', name: 'KUMITE-U12: 10 &amp; 11 Years / Girls / +35 KG' },
-    { id: '1977981', name: 'KUMITE-U14 Beginner: 12 &amp; 13 Years / +55 KG' },
-    { id: '1978087', name: 'Adults-Advanced Elite Kumite: 18 Years+, Green Belt and above / Men / -70 KG' },
+    { id: '1978087', name: 'Adults-Advanced Elite Kumite: 18 Years+, Green Belt and above / Men / -70 KG', athlete: 'Ghaleb',        gender: 'boy'  },
+    { id: '1981250', name: 'KUMITE-U12: 10 &amp; 11 Years / Girls / +35 KG',                              athlete: 'Zhibek',        gender: 'girl' },
+    { id: '1977986', name: 'KUMITE-U14 Advanced: 12 &amp; 13 Years / Boys / -50 KG',                      athlete: 'Senya &amp; Rahim', gender: 'boy'  },
+    { id: '1977981', name: 'KUMITE-U14 Beginner: 12 &amp; 13 Years / +55 KG',                             athlete: 'Suleman',       gender: 'boy'  },
 ];
 
 const SCHEDULE_URL = 'https://smoothcomp.com/en/event/21564/schedule';
@@ -348,12 +359,13 @@ function render(results) {
                 : '<div class="no-data">No schedule entries found</div>';
 
             return `
-                <div class="card">
+                <div class="card ${cat.gender}">
                     <div class="card-head">
                         <div class="card-head-meta">
                             ${startTime ? `<div class="starts-at">Starts <strong>${startTime}</strong></div>` : ''}
                             ${matName   ? `<div class="mat-tag">${matName}</div>` : ''}
                         </div>
+                        <div class="athlete-name">${cat.athlete}</div>
                         <h2>${cat.name}</h2>
                     </div>
                     <div class="card-body">${rows}</div>

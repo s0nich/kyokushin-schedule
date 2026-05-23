@@ -167,6 +167,9 @@
             color: #666;
             margin-top: 2px;
         }
+        .row.past .time-pill,
+        .row.past .match-info,
+        .row.past .match-info strong { color: #555; }
 
         .card-foot {
             padding: 10px 18px;
@@ -337,15 +340,19 @@ function render(results) {
             const startTime = entries[0]?.time || '';
             const matName   = entries[0]?.matName || '';
             const rows = entries.length
-                ? entries.map(e => `
-                    <div class="row">
+                ? entries.map(e => {
+                    const nowMin = new Date().getHours() * 60 + new Date().getMinutes();
+                    const past = e._min < nowMin;
+                    return `
+                    <div class="row${past ? ' past' : ''}">
                         <div class="time-pill">${e.time || '—'}</div>
                         <div class="match-info">
                             <strong>${e.matchCount || '?'}</strong>
                             ${+e.matchCount === 1 ? 'match' : 'matches'}
                             ${e.stage ? `<span class="stage-label">${e.stage}</span>` : ''}
                         </div>
-                    </div>`).join('')
+                    </div>`;
+                }).join('')
                 : '<div class="no-data">No schedule entries found</div>';
 
             return `

@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2026 Kyokushin-Kan America Open — Schedule</title>
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: #0c0c1e;
+            color: #dde0ef;
+            min-height: 100vh;
+            padding: 16px;
+        }
+
+        /* ── Header ── */
+        header {
+            text-align: center;
+            padding: 24px 12px 20px;
+            margin-bottom: 20px;
+        }
+        header h1 {
+            font-size: clamp(1.1rem, 3vw, 1.7rem);
+            font-weight: 800;
+            color: #fff;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            line-height: 1.3;
+        }
+        header p {
+            margin-top: 6px;
+            color: #cc2200;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+        }
+        .divider {
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #cc2200, transparent);
+            margin-bottom: 20px;
+        }
+
+        /* ── Status bar ── */
+        .status-bar {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            gap: 8px;
+            background: #13132a;
+            border: 1px solid #1e1e42;
+            border-radius: 8px;
+            padding: 10px 16px;
+            margin-bottom: 24px;
+            font-size: 0.82rem;
+        }
+        .live-dot {
+            display: inline-block;
+            width: 8px; height: 8px;
+            border-radius: 50%;
+            background: #00cc55;
+            margin-right: 6px;
+            animation: blink 2s infinite;
+        }
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50%       { opacity: 0.3; }
+        }
+        #last-updated { color: #666; }
+        #countdown-wrap { color: #888; }
+        #countdown-wrap span { color: #cc2200; font-weight: 700; }
+
+        /* ── Grid ── */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 18px;
+        }
+
+        /* ── Card ── */
+        .card {
+            background: #13132a;
+            border: 1px solid #1e1e42;
+            border-radius: 12px;
+            overflow: hidden;
+            transition: box-shadow 0.25s;
+        }
+        .card:hover {
+            box-shadow: 0 6px 28px rgba(204, 34, 0, 0.18);
+        }
+        .card-head {
+            background: linear-gradient(135deg, #aa1800 0%, #770f00 100%);
+            padding: 14px 18px;
+        }
+        .card-head-meta {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 8px;
+        }
+        .starts-at {
+            font-size: 0.82rem;
+            color: rgba(255,255,255,0.75);
+        }
+        .starts-at strong {
+            color: #fff;
+            font-size: 1rem;
+        }
+        .card-head h2 {
+            font-size: 0.88rem;
+            font-weight: 700;
+            color: #fff;
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
+            line-height: 1.4;
+        }
+        .card-body {
+            padding: 4px 0;
+        }
+        .row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 11px 18px;
+            border-bottom: 1px solid #1a1a36;
+        }
+        .row:last-child { border-bottom: none; }
+
+        .time-pill {
+            flex-shrink: 0;
+            background: #cc2200;
+            color: #fff;
+            padding: 5px 13px;
+            border-radius: 20px;
+            font-size: 0.88rem;
+            font-weight: 700;
+            min-width: 88px;
+            text-align: center;
+        }
+        .match-info {
+            flex: 1;
+            font-size: 0.83rem;
+            color: #aaa;
+        }
+        .match-info strong {
+            color: #fff;
+            font-size: 1rem;
+        }
+        .mat-tag {
+            flex-shrink: 0;
+            background: rgba(0,0,0,0.35);
+            border: 1px solid rgba(255,255,255,0.25);
+            color: #fff;
+            padding: 3px 10px;
+            border-radius: 4px;
+            font-size: 0.78rem;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+        .stage-label {
+            display: block;
+            font-size: 0.75rem;
+            color: #666;
+            margin-top: 2px;
+        }
+
+        .card-foot {
+            padding: 10px 18px;
+            border-top: 1px solid #1a1a36;
+            background: #0f0f24;
+        }
+        .bracket-link {
+            color: #5577ff;
+            text-decoration: none;
+            font-size: 0.82rem;
+        }
+        .bracket-link:hover {
+            color: #88aaff;
+            text-decoration: underline;
+        }
+
+        /* ── States ── */
+        .no-data {
+            padding: 18px;
+            text-align: center;
+            color: #445;
+            font-size: 0.85rem;
+        }
+        #spinner {
+            text-align: center;
+            padding: 60px 20px;
+            color: #445;
+            font-size: 0.95rem;
+        }
+        .spinner-ring {
+            display: inline-block;
+            width: 32px; height: 32px;
+            border: 3px solid #222244;
+            border-top-color: #cc2200;
+            border-radius: 50%;
+            animation: spin 0.9s linear infinite;
+            vertical-align: middle;
+            margin-left: 10px;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        .error-box {
+            background: #1a0000;
+            border: 1px solid #440000;
+            border-radius: 10px;
+            padding: 22px;
+            color: #ff7766;
+            text-align: center;
+            line-height: 1.6;
+        }
+        .error-box strong { display: block; margin-bottom: 6px; font-size: 1rem; }
+
+        footer {
+            margin-top: 28px;
+            text-align: center;
+            color: #334;
+            font-size: 0.75rem;
+        }
+        footer a { color: #446; text-decoration: none; }
+        footer a:hover { text-decoration: underline; }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>2026 Kyokushin-Kan<br>America Open International Championships</h1>
+    <p>Live Schedule Tracker &mdash; May 23, 2026</p>
+</header>
+<div class="divider"></div>
+
+<div class="status-bar">
+    <div><span class="live-dot"></span>Live &mdash; times update in real time</div>
+    <div id="countdown-wrap">Next refresh in <span id="countdown">60</span>s</div>
+    <div id="last-updated">Loading&hellip;</div>
+</div>
+
+<div id="content">
+    <div id="spinner">Fetching schedule<span class="spinner-ring"></span></div>
+</div>
+
+<footer>
+    Data sourced from
+    <a href="https://smoothcomp.com/en/event/21564/schedule" target="_blank">smoothcomp.com/en/event/21564/schedule</a>
+    &mdash; Times are dynamic and may shift throughout the event.
+</footer>
+
+<script>
+const CATEGORIES = [
+    { id: '1977986', name: 'KUMITE-U14 Advanced: 12 &amp; 13 Years / Boys / -50 KG' },
+    { id: '1981250', name: 'KUMITE-U12: 10 &amp; 11 Years / Girls / +35 KG' },
+    { id: '1977981', name: 'KUMITE-U14 Beginner: 12 &amp; 13 Years / +55 KG' },
+    { id: '1978087', name: 'Adults-Advanced Elite Kumite: 18 Years+, Green Belt and above / Men / -70 KG' },
+];
+
+const SCHEDULE_URL = 'https://smoothcomp.com/en/event/21564/schedule';
+const PROXY_A = url => `https://api.allorigins.win/get?url=${encodeURIComponent(url)}`;
+const PROXY_B = url => `https://corsproxy.io/?${encodeURIComponent(url)}`;
+
+let countdownVal = 60;
+let ticker;
+
+/* ── Fetch via CORS proxy ── */
+async function fetchHtml() {
+    // Primary: corsproxy.io returns raw text
+    try {
+        const r = await fetch(PROXY_B(SCHEDULE_URL), { cache: 'no-store', signal: AbortSignal.timeout(12000) });
+        if (r.ok) return r.text();
+    } catch (_) {}
+
+    // Fallback: allorigins.win returns JSON { contents }
+    const r2 = await fetch(PROXY_A(SCHEDULE_URL), { cache: 'no-store', signal: AbortSignal.timeout(12000) });
+    if (!r2.ok) throw new Error(`HTTP ${r2.status}`);
+    const d = await r2.json();
+    return d.contents;
+}
+
+/* ── Parse time string → minutes since midnight (for sorting) ── */
+function parseMinutes(timeStr) {
+    const m = timeStr.match(/(\d{1,2}):(\d{2})\s*(am|pm)/i);
+    if (!m) return 9999;
+    let h = parseInt(m[1]), min = parseInt(m[2]);
+    const pm = m[3].toLowerCase() === 'pm';
+    if (pm && h !== 12) h += 12;
+    if (!pm && h === 12) h = 0;
+    return h * 60 + min;
+}
+
+/* ── Parse the schedule HTML ── */
+function parseSchedule(html) {
+    const doc = new DOMParser().parseFromString(html, 'text/html');
+    const results = {};
+    CATEGORIES.forEach(c => { results[c.id] = []; });
+
+    doc.querySelectorAll('a[href*="/bracket/"]').forEach(link => {
+        const m = (link.getAttribute('href') || '').match(/\/bracket\/(\d+)/);
+        if (!m || !results[m[1]]) return;
+
+        const li = link.closest('li');
+        if (!li) return;
+
+        const time       = li.querySelector('.eststart')?.textContent?.trim() || '';
+        const matchCount = li.querySelector('.matches')?.textContent?.trim()  || '';
+        const stage      = li.querySelector('span')?.textContent?.trim()      || '';
+        const matName    = link.closest('.panel')
+                              ?.querySelector('.panel-title')
+                              ?.textContent?.trim() || '';
+
+        results[m[1]].push({ time, matchCount, stage, matName, _min: parseMinutes(time) });
+    });
+
+    // Sort entries within each category by time
+    Object.values(results).forEach(arr => arr.sort((a, b) => a._min - b._min));
+
+    return results;
+}
+
+/* ── Render ── */
+function render(results) {
+    // Sort cards by their earliest match time
+    const sorted = [...CATEGORIES].sort((a, b) => {
+        const aMin = (results[a.id]?.[0]?._min) ?? 9999;
+        const bMin = (results[b.id]?.[0]?._min) ?? 9999;
+        return aMin - bMin;
+    });
+
+    const html = `<div class="grid">${
+        sorted.map(cat => {
+            const entries = results[cat.id] || [];
+            const startTime = entries[0]?.time || '';
+            const matName   = entries[0]?.matName || '';
+            const rows = entries.length
+                ? entries.map(e => `
+                    <div class="row">
+                        <div class="time-pill">${e.time || '—'}</div>
+                        <div class="match-info">
+                            <strong>${e.matchCount || '?'}</strong>
+                            ${+e.matchCount === 1 ? 'match' : 'matches'}
+                            ${e.stage ? `<span class="stage-label">${e.stage}</span>` : ''}
+                        </div>
+                    </div>`).join('')
+                : '<div class="no-data">No schedule entries found</div>';
+
+            return `
+                <div class="card">
+                    <div class="card-head">
+                        <div class="card-head-meta">
+                            ${startTime ? `<div class="starts-at">Starts <strong>${startTime}</strong></div>` : ''}
+                            ${matName   ? `<div class="mat-tag">${matName}</div>` : ''}
+                        </div>
+                        <h2>${cat.name}</h2>
+                    </div>
+                    <div class="card-body">${rows}</div>
+                    <div class="card-foot">
+                        <a class="bracket-link"
+                           href="https://smoothcomp.com/en/event/21564/bracket/${cat.id}"
+                           target="_blank">View full bracket &rarr;</a>
+                    </div>
+                </div>`;
+        }).join('')
+    }</div>`;
+
+    document.getElementById('content').innerHTML = html;
+}
+
+function renderError(msg) {
+    document.getElementById('content').innerHTML = `
+        <div class="error-box">
+            <strong>Could not load schedule</strong>
+            ${msg}<br><small>Retrying in ${countdownVal}s&hellip;</small>
+        </div>`;
+}
+
+/* ── Main update cycle ── */
+async function update() {
+    document.getElementById('last-updated').textContent = 'Updating…';
+    try {
+        const html    = await fetchHtml();
+        const results = parseSchedule(html);
+        render(results);
+        document.getElementById('last-updated').textContent =
+            'Updated: ' + new Date().toLocaleTimeString();
+    } catch (err) {
+        console.error(err);
+        renderError(err.message);
+        document.getElementById('last-updated').textContent = 'Update failed';
+    }
+
+    // Reset 60-second countdown
+    countdownVal = 60;
+    clearInterval(ticker);
+    document.getElementById('countdown').textContent = countdownVal;
+
+    ticker = setInterval(() => {
+        countdownVal--;
+        document.getElementById('countdown').textContent = countdownVal;
+        if (countdownVal <= 0) {
+            clearInterval(ticker);
+            update();
+        }
+    }, 1000);
+}
+
+update();
+</script>
+</body>
+</html>

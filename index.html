@@ -75,7 +75,7 @@
         #refresh-btn.loading { opacity: 0.6; pointer-events: none; }
         .spin-icon { display: inline-block; }
         #refresh-btn.loading .spin-icon { animation: spin 0.8s linear infinite; }
-        #auto-label { font-size: 0.75rem; color: #8888bb; margin-left: 4px; font-weight: 400; }
+
         #last-updated { font-size: 0.75rem; color: #555; margin-top: 6px; text-align: center; }
 
         /* ── Grid ── */
@@ -253,7 +253,7 @@
 
 <div class="refresh-bar">
     <button id="refresh-btn" onclick="update()">
-        <span class="spin-icon">↻</span> Refresh <span id="auto-label"></span>
+        <span class="spin-icon">↻</span> Refresh
     </button>
     <div id="last-updated"></div>
 </div>
@@ -283,7 +283,6 @@ const PROXY_A = url => `https://api.allorigins.win/get?url=${encodeURIComponent(
 const PROXY_B = url => `https://corsproxy.io/?${encodeURIComponent(url)}`;
 
 let ticker;
-let countdown;
 
 /* ── Fetch via CORS proxy ── */
 async function fetchHtml() {
@@ -420,20 +419,9 @@ async function update() {
         btn.classList.remove('loading');
     }
 
-    // Auto-refresh every 60 s + countdown display
+    // Auto-refresh every 60 s
     clearInterval(ticker);
-    clearInterval(countdown);
-    let secs = 60;
-    const label = document.getElementById('auto-label');
-    label.textContent = `· ${secs}s`;
-    countdown = setInterval(() => {
-        secs--;
-        label.textContent = `· ${secs}s`;
-    }, 1000);
-    ticker = setInterval(() => {
-        clearInterval(countdown);
-        update();
-    }, 60000);
+    ticker = setInterval(update, 60000);
 }
 
 update();

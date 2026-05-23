@@ -275,6 +275,8 @@ const CATEGORIES = [
 ];
 
 const SCHEDULE_URL = 'https://smoothcomp.com/en/event/21564/schedule';
+// Append timestamp so proxies never serve a cached copy
+const bustUrl = () => `${SCHEDULE_URL}?_=${Date.now()}`;
 const PROXY_A = url => `https://api.allorigins.win/get?url=${encodeURIComponent(url)}`;
 const PROXY_B = url => `https://corsproxy.io/?${encodeURIComponent(url)}`;
 
@@ -283,14 +285,15 @@ let countdown;
 
 /* ── Fetch via CORS proxy ── */
 async function fetchHtml() {
+    const url = bustUrl(); // unique URL each call — bypasses proxy cache
     // Primary: corsproxy.io returns raw text
     try {
-        const r = await fetch(PROXY_B(SCHEDULE_URL), { cache: 'no-store', signal: AbortSignal.timeout(12000) });
+        const r = await fetch(PROXY_B(url), { cache: 'no-store', signal: AbortSignal.timeout(12000) });
         if (r.ok) return r.text();
     } catch (_) {}
 
     // Fallback: allorigins.win returns JSON { contents }
-    const r2 = await fetch(PROXY_A(SCHEDULE_URL), { cache: 'no-store', signal: AbortSignal.timeout(12000) });
+    const r2 = await fetch(PROXY_A(url), { cache: 'no-store', signal: AbortSignal.timeout(12000) });
     if (!r2.ok) throw new Error(`HTTP ${r2.status}`);
     const d = await r2.json();
     return d.contents;

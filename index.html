@@ -284,7 +284,6 @@ const bustUrl = () => `${SCHEDULE_URL}?_=${Date.now()}`;
 const PROXY_A = url => `https://api.allorigins.win/get?url=${encodeURIComponent(url)}`;
 const PROXY_B = url => `https://corsproxy.io/?${encodeURIComponent(url)}`;
 
-let ticker;
 
 /* ── Fetch via CORS proxy ── */
 async function fetchHtml() {
@@ -420,10 +419,6 @@ async function update() {
     } finally {
         btn.classList.remove('loading');
     }
-
-    // Auto-refresh every 60 s
-    clearInterval(ticker);
-    ticker = setInterval(update, 60000);
 }
 
 update();
